@@ -7,3 +7,14 @@ __pycache__/
 .pytest_cache/
 .venv/
 venv/
+
+# Screenshots and temporary files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.txt
+!requirements.txt
+!CONTRIBUTING.md
+!README.md
