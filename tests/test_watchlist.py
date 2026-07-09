@@ -12,8 +12,10 @@ from models import User, Film, WatchlistEntry
 from services.watchlist_service import (
     add_to_watchlist,
     get_watchlist,
+    remove_from_watchlist,
     FilmNotFoundError,
-    AlreadyInWatchlistError
+    AlreadyInWatchlistError,
+    NotInWatchlistError
 )
 
 
@@ -130,3 +132,33 @@ def test_get_watchlist_returns_alphabetical(app, sample_user):
         # Alien comes before Blade Runner alphabetically
         assert titles[0] == "Alien"
         assert titles[1] == "Blade Runner"
+
+
+
+# ── remove_from_watchlist ───────────────────────────────────────────────────
+
+def test_remove_from_watchlist_succeeds(app, sample_user, sample_film):
+    """
+    Removing a film that is in the watchlist should succeed and delete the entry.
+    """
+    with app.app_context():
+        add_to_watchlist(user_id=sample_user, film_id=sample_film)
+        
+        result = remove_from_watchlist(user_id=sample_user, film_id=sample_film)
+        
+        assert result is True
+        
+        # Verify it was actually deleted
+        in_db = WatchlistEntry.query.filter_by(
+            user_id=sample_user, film_id=sample_film
+        ).first()
+        assert in_db is None
+
+
+def test_remove_from_watchlist_not_in_list_raises(app, sample_user, sample_film):
+    """
+    Removing a film that is not in the watchlist should raise NotInWatchlistError.
+    """
+    with app.app_context():
+        with pytest.raises(NotInWatchlistError):
+            remove_from_watchlist(user_id=sample_user, film_id=sample_film)

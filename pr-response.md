@@ -147,4 +147,30 @@ f0a6ba7 fix: update film retrieval method to use db.session.get in collection an
 3e4b117 feat: add watchlist model and add_to_watchlist service endpoint
 ```
 
+![alt text](image.png)
 All commits follow conventional commit format. No merge commits.
+
+---
+
+## Stretch Features
+
+### Stretch Feature 1: `remove_from_watchlist()`
+
+**What I implemented:** Added `remove_from_watchlist(user_id, film_id)` function in `services/watchlist_service.py` following the same pattern as `remove_from_collection()` in `collection_service.py`.
+
+**How it works:**
+- Queries `WatchlistEntry` by `user_id` + `film_id`
+- If not found, raises `NotInWatchlistError` (new exception class added)
+- If found, deletes the entry and returns `True`
+
+**Pattern consistency:** Follows project conventions:
+- Same signature style as `remove_from_collection()`
+- Raises a descriptive exception (`NotInWatchlistError`) rather than returning `False` or raising a generic error
+- Returns `bool` on success for consistency
+
+**Tests added:**
+- `test_remove_from_watchlist_succeeds` — verifies successful deletion and confirms entry no longer exists in database
+- `test_remove_from_watchlist_not_in_list_raises` — verifies `NotInWatchlistError` is raised when film isn't in the watchlist
+
+Both tests pass. This completes the CRUD operations for watchlist management (Create via `add_to_watchlist`, Read via `get_watchlist`, Delete via `remove_from_watchlist`).
+
