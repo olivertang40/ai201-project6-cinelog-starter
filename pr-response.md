@@ -11,7 +11,7 @@
 ## Comment 2 — Deduplication
 **What I did:** Added `AlreadyInWatchlistError` exception class directly in `watchlist_service.py`. Added a duplicate-check in `add_to_watchlist()` — queries `WatchlistEntry` by `user_id` + `film_id` before inserting; raises `AlreadyInWatchlistError` if a record already exists. Follows the same pattern as `add_to_collection()` in `collection_service.py`.
 
-**How I verified:**
+**How I verified:** Ran `pytest tests/ -v` — all 8 tests pass, including `test_add_to_watchlist_duplicate_raises` which directly tests this logic.
 
 ## Comment 3 — Missing test
 **What I did:** Created `tests/test_watchlist.py` with 4 tests mirroring `test_collection.py` structure:
@@ -25,14 +25,22 @@ Also fixed missing `backref` relationships in `models.py`: added `watchlist_entr
 **How I verified:** Ran `pytest tests/test_watchlist.py -v` — all 4 tests pass.
 
 ## Comment 4 — Default visibility
-**My position:**
-**Reasoning:**
-**Tradeoff acknowledged:**
+**My position:** Keep `public=True` as the default.
+
+**Reasoning:** The watchlist is a discovery and sharing feature — its primary value is visible when other users can see it. A new user adding their first film to a watchlist is likely exploring the app, not yet thinking about privacy settings. Defaulting to public means they immediately get the social benefit (others can see their taste, they can share it) without any extra action. If we defaulted to `public=False`, most watchlists would stay private simply because users never changed the default — which would kill the social dimension of the feature entirely.
+
+This follows the same principle as social platforms (Twitter, Letterboxd, Goodreads): content is public by default, and users who want privacy can opt out. The friction is placed on the privacy use case, not the sharing use case, because sharing is the feature's core purpose.
+
+**Tradeoff acknowledged:** The main downside is that users who add a film without reading the UI may not realize their watchlist is public. This is a real privacy concern — especially for users who are more privacy-conscious. A production-ready implementation should show a clear indicator in the UI when a list is public, and make the toggle easy to find. The default is appropriate here, but the UI needs to make the visibility state obvious at a glance.
 
 ## Comment 5 — Sort order
-**My position:**
-**Reasoning:**
-**Engagement with reviewer's point:**
+**My position:** Keep alphabetical sort (A → Z by title) for the watchlist, rather than switching to date-added descending.
+
+**Reasoning:** A watchlist is fundamentally a queue of films a user *hasn't seen yet* — it's not a log. Date-added order (newest first) makes sense for a collection/log, where you want to see your most recent activity. But for a "films I want to watch" list, the more useful question is "what's on my list?" not "what did I add most recently?" Alphabetical sort makes the list scannable and consistent — users can find a specific film quickly, and the order doesn't shift every time they add something new.
+
+Collection (`get_collection`) sorts by `date_added DESC` because it's a history — recency matters. Watchlist is a set — browsability matters. These are different use cases and deserve different sort defaults.
+
+**Engagement with reviewer's point:** The reviewer's argument for date-added order is valid in one scenario: if a user adds a film because they just heard about it and want to watch it soon, date-added order surfaces that intent. That's a legitimate use case. However, alphabetical sort doesn't prevent that — the user can still watch films in any order they choose. The sort only affects how the list is *displayed*, not what they can do with it. If CineLog adds a priority or queue feature later, that would be the right place to handle "watch next" ordering. For now, alphabetical is the more neutral and scannable default.
 
 ## Comment 6 — Rebase
 **What conflicted:**
