@@ -9,7 +9,8 @@
 **How I verified:** Searched the entire project for any remaining references to `save_to_watchlist` — none found. Confirmed the route's import and call both use the new name.
 
 ## Comment 2 — Deduplication
-**What I did:**
+**What I did:** Added `AlreadyInWatchlistError` exception class directly in `watchlist_service.py`. Added a duplicate-check in `add_to_watchlist()` — queries `WatchlistEntry` by `user_id` + `film_id` before inserting; raises `AlreadyInWatchlistError` if a record already exists. Follows the same pattern as `add_to_collection()` in `collection_service.py`.
+
 **How I verified:**
 
 ## Comment 3 — Missing test
