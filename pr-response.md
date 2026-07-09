@@ -2,17 +2,17 @@
 
 ## AI Usage
 
-Kiro (AI coding assistant) was used throughout this project in the following ways:
+Claude (Anthropic's AI assistant) was used throughout this project in the following ways:
 
-1. **Codebase orientation (Milestone 1):** Used AI to read and explain `models.py`, `collection_service.py`, and `watchlist_service.py` in Chinese, building a clear mental model of the relationships between models, services, and routes before touching any code.
+1. **Codebase orientation (Milestone 1):** Used Claude to read and explain `models.py`, `collection_service.py`, and `watchlist_service.py`, building a clear mental model of the relationships between models, services, and routes before touching any code.
 
-2. **Bug discovery:** AI review of `watchlist_service.py` caught that `AlreadyInWatchlistError` was being raised without being defined or imported — a `NameError` that would only surface at runtime. This identified the need to define the exception class in the file directly (Plan A).
+2. **Bug discovery:** Claude's review of `watchlist_service.py` caught that `AlreadyInWatchlistError` was being raised without being defined or imported — a `NameError` that would only surface at runtime. This identified the need to define the exception class in the file directly (Plan A).
 
-3. **Identifying missing backref:** AI review of `models.py` identified that `WatchlistEntry` had no `backref="film"` relationship defined on `Film`, which caused `entry.film` to fail with `AttributeError` at test time. This was fixed in `models.py` before tests ran.
+3. **Identifying missing backref:** Claude's review of `models.py` identified that `WatchlistEntry` had no `backref="film"` relationship defined on `Film`, which caused `entry.film` to fail with `AttributeError` at test time. This was fixed in `models.py` before tests ran.
 
-4. **Stress-testing design arguments (Comments 4 and 5):** After drafting the Comment 4 and Comment 5 responses, I asked AI: "What counterarguments would a careful code reviewer raise against these positions? What tradeoffs am I not considering?" For Comment 4 (public default), AI raised the privacy concern for users who don't notice the UI state — this was already in my draft and I kept it. For Comment 5 (alphabetical sort), AI pointed out the "just heard about it, want to watch soon" recency use case — I incorporated this directly into the "Engagement with reviewer's point" section and explained why alphabetical sort doesn't prevent that use case.
+4. **Stress-testing design arguments (Comments 4 and 5):** After drafting the Comment 4 and Comment 5 responses, I asked Claude: "What counterarguments would a careful code reviewer raise against these positions? What tradeoffs am I not considering?" For Comment 4 (public default), Claude raised the privacy concern for users who don't notice the UI state — this was already in my draft and I kept it. For Comment 5 (alphabetical sort), Claude pointed out the "just heard about it, want to watch soon" recency use case — I incorporated this directly into the "Engagement with reviewer's point" section and explained why alphabetical sort doesn't prevent that use case.
 
-5. **Commit message validation:** Asked AI to review `git log --oneline` output and check for conventional commit format compliance — AI identified 3 commits missing `fix:` / `test:` prefixes, which were corrected by rebuilding the branch via cherry-pick.
+5. **Commit message validation:** Asked Claude to review `git log --oneline` output and check for conventional commit format compliance — Claude identified 3 commits missing `fix:` / `test:` prefixes, which were corrected by rebuilding the branch via cherry-pick.
 
 ## Comment 1 — Rename
 **What I did:** Renamed `save_to_watchlist()` to `add_to_watchlist()` in `services/watchlist_service.py` to match the project's `verb_to_noun` naming convention (consistent with `add_to_collection` in collection_service). Updated the single call site in `routes/watchlist/watchlist.py` (both the import and the function call).
