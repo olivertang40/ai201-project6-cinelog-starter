@@ -14,8 +14,15 @@
 **How I verified:**
 
 ## Comment 3 — Missing test
-**What I did:**
-**How I verified:**
+**What I did:** Created `tests/test_watchlist.py` with 4 tests mirroring `test_collection.py` structure:
+- `test_add_to_watchlist_creates_entry` — basic add
+- `test_add_to_watchlist_duplicate_raises` — deduplication check
+- `test_add_to_watchList_nonexistent_film_raises` — handles nonexistent film (the required test per Comment 3)
+- `test_get_watchlist_returns_alphabetical` — sort order verification
+
+Also fixed missing `backref` relationships in `models.py`: added `watchlist_entries` relationships to both `User` and `Film` models so `entry.film` and `entry.user` work correctly.
+
+**How I verified:** Ran `pytest tests/test_watchlist.py -v` — all 4 tests pass.
 
 ## Comment 4 — Default visibility
 **My position:**
