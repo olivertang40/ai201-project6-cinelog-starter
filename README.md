@@ -22,15 +22,20 @@ The app starts on `http://localhost:5000` and uses a local SQLite database (`cin
 ```
 ai201-project6-cinelog-starter/
 ├── app.py                     # Flask app factory
-├── models.py                  # SQLAlchemy models
+├── models.py                  # SQLAlchemy models (Film, User, CollectionEntry, WatchlistEntry)
 ├── services/
-│   └── collection_service.py  # Business logic for collections
+│   ├── collection_service.py  # Business logic for collections
+│   └── watchlist_service.py   # Business logic for watchlist
 ├── routes/
 │   ├── films.py               # Film browsing endpoints
-│   └── collection.py          # Collection endpoints
+│   ├── collection.py          # Collection endpoints
+│   └── watchlist/
+│       └── watchlist.py       # Watchlist endpoints
 ├── tests/
-│   └── test_collection.py     # Tests for collection service
+│   ├── test_collection.py     # Tests for collection service
+│   └── test_watchlist.py      # Tests for watchlist service
 ├── CONTRIBUTING.md            # Commit conventions and PR guidelines
+├── pr-response.md             # Code review response documentation
 └── requirements.txt
 ```
 
@@ -53,6 +58,13 @@ ai201-project6-cinelog-starter/
 | POST | `/collection/<user_id>/add` | Add a film to the collection |
 | DELETE | `/collection/<user_id>/remove` | Remove a film from the collection |
 
+### Watchlist
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/watchlist/<user_id>` | Get a user's watchlist (alphabetical by title) |
+| POST | `/watchlist/<user_id>/add` | Add a film to the watchlist |
+
 ---
 
 ## Data Models
@@ -62,6 +74,8 @@ ai201-project6-cinelog-starter/
 **User** — A registered user. IDs are UUIDs.
 
 **CollectionEntry** — Links a user to a film they've watched. Stores rating and date added. A user can only have one entry per film.
+
+**WatchlistEntry** — Links a user to a film they want to watch. Stores date added and visibility (public/private). A user can only have one entry per film.
 
 ---
 
@@ -81,12 +95,13 @@ pytest tests/
 
 ## Your Task
 
-You're working on the `feature/watchlist` branch, which adds a watchlist feature to CineLog. A maintainer (`@dev-lead`) has reviewed your PR and left six comments. Your job is to address all six.
+This is the completed `feature/watchlist` branch with a fully implemented watchlist feature. The PR has been reviewed and all six maintainer comments have been addressed:
 
-Read `CONTRIBUTING.md` before touching any code. Then check out the `feature/watchlist` branch:
+1. ✅ Renamed `save_to_watchlist` to `add_to_watchlist` for naming consistency
+2. ✅ Added deduplication logic to prevent duplicate entries
+3. ✅ Added comprehensive test coverage
+4. ✅ Documented design decision: `public=True` default visibility
+5. ✅ Documented design decision: Alphabetical sort order
+6. ✅ Rebased onto main and resolved UUID migration conflicts
 
-```bash
-git checkout feature/watchlist
-```
-
-The open PR and the maintainer's review comments are filed on GitHub. Work through each comment and document your responses in your **PR Response Doc**.
+See `pr-response.md` for complete documentation of all changes and design decisions.
